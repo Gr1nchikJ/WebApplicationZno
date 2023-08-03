@@ -16,15 +16,15 @@ namespace WebApplicationZno.Controllers
         }
 
         [HttpGet(Name = "GetAllQuestions")]
-        public IEnumerable<QuestionModel> GetAll()
+        public async Task<IEnumerable<QuestionModel>> GetAll()
         {
-            return _questionRepository.GetAllQuestions();
+            return await _questionRepository.GetAllQuestions();
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            QuestionModel question = _questionRepository.GetById(id);
+            QuestionModel question = await _questionRepository.GetById(id);
 
             if (question == null)
             {
@@ -35,18 +35,18 @@ namespace WebApplicationZno.Controllers
         }
 
         [HttpPost]
-        public IActionResult Create([FromBody] QuestionModel question)
+        public async Task<IActionResult> Create([FromBody] QuestionModel question)
         {
             if (question == null)
             {
                 return BadRequest();
             }
-            _questionRepository.Create(question);
+            await _questionRepository.Create(question);
             return CreatedAtRoute("GetQuestionItem", new { id = question.Id }, question);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(Guid id, [FromBody] QuestionModel question)
+        public async Task<IActionResult> Update(Guid id, [FromBody] QuestionModel question)
         {
             if (question == null || question.Id != id)
             {
@@ -59,14 +59,14 @@ namespace WebApplicationZno.Controllers
                 return NotFound();
             }
 
-            _questionRepository.Update(question);
+            await _questionRepository.Update(question);
             return new OkObjectResult(question);
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(Guid id)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var deletedQuestionItem = _questionRepository.Delete(id);
+            var deletedQuestionItem = await _questionRepository.Delete(id);
 
             if (deletedQuestionItem == null)
             {

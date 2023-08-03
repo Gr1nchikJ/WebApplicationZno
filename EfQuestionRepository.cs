@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Data.Entity.Core;
 using WebApplicationZno.Models;
 using WebApplicationZno.Persistance;
 
@@ -12,44 +13,47 @@ namespace WebApplicationZno
             _efDbContext = efDbContext;
         }
 
-        public void Create(QuestionModel question)
+        public async Task Create(QuestionModel question)
         {
-           _efDbContext.Questions.Add(question);
-           _efDbContext.SaveChanges();
+           await _efDbContext.Questions.AddAsync(question);
+           await _efDbContext.SaveChangesAsync();
         }
 
-        public QuestionModel Delete(Guid id)
+        public async  Task<QuestionModel> Delete(Guid id)
         {
-            var questionForDelete = GetById(id);
+            var questionForDelete = await GetById(id);
 
             _efDbContext.Remove(questionForDelete);
 
-            _efDbContext.SaveChanges();
+            await _efDbContext.SaveChangesAsync();
 
             return questionForDelete;
         }
 
-        public IEnumerable<QuestionModel> GetAllQuestions()
+        public async Task<IEnumerable<QuestionModel>> GetAllQuestions()
         {
-            var questions = _efDbContext.Questions.ToList();
+            var questions = await _efDbContext.Questions.ToListAsync();
 
             return questions; 
         }
 
-        public QuestionModel GetById(Guid id)
+        public async Task<QuestionModel> GetById(Guid id)
         {
-            var question = _efDbContext.Questions.FirstOrDefault(x => x.Id == id);
-
+            var question = await _efDbContext.Questions.FirstOrDefaultAsync(x => x.Id == id);
+            if (question == null)
+            {
+                throw new ObjectNotFoundException("Entity was not found");
+            }
             return question;
         }
 
-        public void Update(QuestionModel question)
+        public async Task Update(QuestionModel question)
         {
-            var questionForUpdate = GetById(question.Id);
+            var questionForUpdate = await GetById(question.Id);
             questionForUpdate.Title = question.Title;
             questionForUpdate.Description = question.Description;
             _efDbContext.Questions.Update(questionForUpdate);
-            _efDbContext.SaveChanges();
+            await _efDbContext.SaveChangesAsync();
         }
     }
 }

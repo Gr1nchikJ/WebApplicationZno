@@ -4,11 +4,11 @@ namespace WebApplicationZno
 {
     public interface IQuestionRepository
     {
-        IEnumerable<QuestionModel> GetAllQuestions();
-        QuestionModel GetById(Guid id);
-        void Create(QuestionModel question);
-        void Update(QuestionModel question);
-        QuestionModel Delete(Guid id);
+        Task<IEnumerable<QuestionModel>> GetAllQuestions();
+        Task<QuestionModel> GetById(Guid id);
+        Task Create(QuestionModel question);
+        Task Update(QuestionModel question);
+        Task<QuestionModel> Delete(Guid id);
         
     }
 }
